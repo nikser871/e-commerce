@@ -1,0 +1,8 @@
+server:
+  port: 80
+  servlet:
+    context-path: /Shopme
+
+spring:
+  application:
+    name: ShopmeFrontEnd

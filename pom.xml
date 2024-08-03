@@ -11,8 +11,8 @@
     <description>Root project</description>
 
     <modules>
-        <module>ShopmeCommon/ShopmeCommon</module>
-        <module>ShopmeWebParent/ShopmeWebParent</module>
+        <module>ShopmeCommon</module>
+        <module>ShopmeWebParent</module>
     </modules>
 
 </project>
