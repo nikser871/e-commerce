@@ -1,4 +1,4 @@
-package com.admin;
+package com.shopme.admin;
 
 
 import org.springframework.stereotype.Controller;
