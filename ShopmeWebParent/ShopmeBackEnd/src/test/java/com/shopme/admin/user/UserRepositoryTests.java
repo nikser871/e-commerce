@@ -135,6 +135,14 @@ public class UserRepositoryTests {
 //        assertThrows(NullPointerException.class, () -> userRepository.findById(2L).get());
     }
 
+    @Test
+    public void testGetUserByEmail() {
+        String email = "namjavaprogrammer@gmail.com";
+        User user = userRepository.getUserByEmail(email);
+
+        assertThat(user).isNotNull();
+    }
+
 
 
 }
