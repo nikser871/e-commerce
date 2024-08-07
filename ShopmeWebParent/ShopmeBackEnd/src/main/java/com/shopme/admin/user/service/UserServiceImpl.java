@@ -6,6 +6,7 @@ import com.shopme.admin.user.UserRepository;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> listAll() {
@@ -28,6 +30,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(User user) {
+        encodePassword(user);
         userRepository.save(user);
+    }
+
+    private void encodePassword(User user) {
+        var encode = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encode);
     }
 }
