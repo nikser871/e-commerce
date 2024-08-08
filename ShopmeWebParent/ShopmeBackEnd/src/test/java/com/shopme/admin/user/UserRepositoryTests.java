@@ -150,6 +150,14 @@ public class UserRepositoryTests {
         assertThat(id).isGreaterThan(0L);
     }
 
+    @Test
+    public void testDisableUser() {
+        userRepository.updateEnabledStatus(1L, false);
+
+        assertThat(userRepository.findById(1L).get()).isNotNull();
+        assertThat(userRepository.findById(1L).get().isEnabled()).isFalse();
+    }
+
 
 
 

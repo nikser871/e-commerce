@@ -9,6 +9,7 @@ import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -77,6 +79,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Could not find any user with ID " + id));
+    }
+
+    @Override
+    public void updateUserEnabledStatus(Long id, Boolean enabled) {
+        userRepository.updateEnabledStatus(id, enabled);
     }
 
     private void encodePassword(User user) {

@@ -20,4 +20,6 @@ public interface UserService {
     void deleteUser(Long id) throws UserNotFoundException;
 
     User getById(Long id) throws UserNotFoundException;
+
+    void updateUserEnabledStatus(Long id, Boolean enabled);
 }
