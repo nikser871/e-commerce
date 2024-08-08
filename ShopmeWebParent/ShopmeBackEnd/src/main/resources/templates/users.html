@@ -6,18 +6,18 @@
 
     <title>Home - Shopme Admin</title>
 
-    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
-    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}" ></script>
-    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" ></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 </head>
 <body>
 <div class="container-fluid">
     <div>
         <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
             <a class="navbar-brand" th:href="@{/}">
-                <img th:src="@{/images/ShopmeAdminSmall.png}" />
+                <img th:src="@{/images/ShopmeAdminSmall.png}"/>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
                 <span class="navbar-toggler-icon"></span>
@@ -74,38 +74,61 @@
     <div>
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="table-dark">
-                <tr>
-                    <th>User Id</th>
-                    <th>Photos</th>
-                    <th>Email</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Roles</th>
-                    <th>Enabled</th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th>User Id</th>
+                <th>Photos</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Roles</th>
+                <th>Enabled</th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                <tr th:each="user : ${listUsers}">
-                    <td>[[${user.id}]]</td>
-                    <td><span class="fa-solid fa-image-portrait fa-3x icon-gray"></span></td>
-                    <td>[[${user.email}]]</td>
-                    <td>[[${user.firstName}]]</td>
-                    <td>[[${user.lastName}]]</td>
-                    <td>[[${user.roles}]]</td>
-                    <td>
-                        <a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green" href=""></a>
-                        <a th:if="${user.enabled == false}" class="fas fa-check-circle fa-2x icon-gray" href=""></a>
-                    </td>
-                    <td>
-                        <a class="fa-solid fa-pen-to-square fa-2x icon-green"
-                           th:href="@{'/users/edit/' + ${user.id}}" title="Edit this user"></a>
-                        &nbsp;
-                        <a class="fas fa-trash fa-2x icon-gray" href=""></a>
-                    </td>
-                </tr>
+            <tr th:each="user : ${listUsers}">
+                <td>[[${user.id}]]</td>
+                <td><span class="fa-solid fa-image-portrait fa-3x icon-gray"></span></td>
+                <td>[[${user.email}]]</td>
+                <td>[[${user.firstName}]]</td>
+                <td>[[${user.lastName}]]</td>
+                <td>[[${user.roles}]]</td>
+                <td>
+                    <a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green" href=""></a>
+                    <a th:if="${user.enabled == false}" class="fas fa-check-circle fa-2x icon-gray" href=""></a>
+                </td>
+                <td>
+                    <a class="fa-solid fa-pen-to-square fa-2x icon-green"
+                       th:href="@{'/users/edit/' + ${user.id}}" title="Edit this user"></a>
+                    &nbsp;
+                    <a class="fas fa-trash fa-2x icon-gray link-delete"
+                       th:href="@{'/users/delete/' + ${user.id}}"
+                       th:userId="${user.id}"
+                       title="Delete this user"></a>
+                </td>
+            </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="modal text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="confirmText">
+                    <span></span>
+                </div>
+
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">Yes</a>
+                    <button type="button" name="test" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="text-center">
@@ -113,5 +136,31 @@
     </div>
 
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".link-delete").on('click', function (e) {
+            e.preventDefault();
+            const link = $(this);
+            // alert($(this).attr("href"));
+            const userId = link.attr("userId");
+            $("#yesButton").attr("href", link.attr("href"));
+            $("#confirmText").text("Are you sure you want to delete this user with ID : " + userId);
+            $("#confirmModal").show();
+
+        });
+
+    });
+
+
+    document.querySelector('.btn-close').addEventListener('click',
+        () => {
+            $("#confirmModal").hide();
+        });
+
+    document.querySelector('[name="test"]').addEventListener('click',
+        () => {
+            $("#confirmModal").hide();
+        });
+</script>
 </body>
 </html>

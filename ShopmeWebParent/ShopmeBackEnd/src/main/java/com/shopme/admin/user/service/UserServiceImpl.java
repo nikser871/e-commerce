@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +61,17 @@ public class UserServiceImpl implements UserService {
         if (isCreatingNew) {
             return false;
         } else return Objects.equals(user.getId(), id);
+    }
+
+    @Override
+    public void deleteUser(Long id) throws UserNotFoundException {
+        var countById = userRepository.countById(id);
+        if (countById == 0) {
+            throw new UserNotFoundException("Could not find any user with ID " + id);
+        }
+
+        userRepository.deleteById(id);
+
     }
 
     @Override

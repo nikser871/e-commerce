@@ -10,10 +10,14 @@ import java.util.Optional;
 public interface UserService {
 
     List<User> listAll();
+
     List<Role> listRoles();
 
     void saveUser(User user);
+
     boolean isEmailUnique(Long id, String email);
+
+    void deleteUser(Long id) throws UserNotFoundException;
 
     User getById(Long id) throws UserNotFoundException;
 }
