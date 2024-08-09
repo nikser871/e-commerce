@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
         boolean isUpdatingUser = user.getId() != null;
 
         if (isUpdatingUser) {
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
             encodePassword(user);
         }
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
 

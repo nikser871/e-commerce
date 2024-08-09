@@ -13,7 +13,7 @@ public interface UserService {
 
     List<Role> listRoles();
 
-    void saveUser(User user);
+    User saveUser(User user);
 
     boolean isEmailUnique(Long id, String email);
 

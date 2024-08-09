@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,6 +48,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles = new ArrayList<>();
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (id == null || photos == null)
+            return "/images/default-user.png";
+
+        return "/user-photos/" + this.id + "/" + this.photos;
+    }
 
     public void addRole(Role role) {
         this.roles.add(role);
