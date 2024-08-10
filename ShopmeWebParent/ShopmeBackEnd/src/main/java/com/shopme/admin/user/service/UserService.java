@@ -10,10 +10,8 @@ import java.util.Optional;
 
 public interface UserService {
 
-    List<User> listAll();
 
     List<Role> listRoles();
-
     User saveUser(User user);
 
     boolean isEmailUnique(Long id, String email);
@@ -24,5 +22,5 @@ public interface UserService {
 
     void updateUserEnabledStatus(Long id, Boolean enabled);
 
-    Page<User> listByPage(int pageNum);
+    Page<User> listByPage(int pageNum, String sortField, String sortDir);
 }
