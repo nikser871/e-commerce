@@ -3,6 +3,7 @@ package com.shopme.admin.user.service;
 import com.shopme.admin.exception.UserNotFoundException;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,4 +23,6 @@ public interface UserService {
     User getById(Long id) throws UserNotFoundException;
 
     void updateUserEnabledStatus(Long id, Boolean enabled);
+
+    Page<User> listByPage(int pageNum);
 }

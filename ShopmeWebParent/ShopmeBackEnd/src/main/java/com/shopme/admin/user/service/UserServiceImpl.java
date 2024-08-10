@@ -2,11 +2,14 @@ package com.shopme.admin.user.service;
 
 
 import com.shopme.admin.exception.UserNotFoundException;
-import com.shopme.admin.user.RoleRepository;
-import com.shopme.admin.user.UserRepository;
+import com.shopme.admin.user.repositories.RoleRepository;
+import com.shopme.admin.user.repositories.UserRepository;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+import static com.shopme.admin.constants.Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +88,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserEnabledStatus(Long id, Boolean enabled) {
         userRepository.updateEnabledStatus(id, enabled);
+    }
+
+    @Override
+    public Page<User> listByPage(int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum - 1, USERS_PER_PAGE);
+        return userRepository.findAll(pageable);
     }
 
     private void encodePassword(User user) {

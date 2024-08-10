@@ -119,6 +119,39 @@
         </table>
     </div>
 
+    <div class="text-center m-1" th:if="${totalElements} > 0">
+        <span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalElements}]]</span>
+    </div>
+
+    <div class="text-center m-1" th:unless="${totalElements} > 0">
+        <span>No users found</span>
+    </div>
+
+    <div>
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li th:class="${currPage > 1 ? 'page-item' : 'page-item disabled'}">
+                    <a class="page-link" th:href="@{/users/page/1}">First</a>
+                </li>
+                <li th:class="${currPage > 1 ? 'page-item' : 'page-item disabled'}">
+                    <a class="page-link" th:href="@{'/users/page/' + ${currPage - 1}}">Previous</a>
+                </li>
+
+                <li th:class="${currPage != i ? 'page-item' : 'page-item active'}"
+                    th:each="i : ${#numbers.sequence(1, lastPage)}">
+                    <a class="page-link" th:href="@{'/users/page/' + ${i}}">[[${i}]]</a>
+                </li>
+
+                <li th:class="${currPage < lastPage ? 'page-item' : 'page-item disabled'}">
+                    <a class="page-link" th:href="@{'/users/page/' + ${currPage + 1}}">Next</a>
+                </li>
+                <li th:class="${currPage < lastPage ? 'page-item' : 'page-item disabled'}">
+                    <a class="page-link" th:href="@{'/users/page/' + ${lastPage}}">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
     <div class="modal text-center" id="confirmModal">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -7,6 +7,7 @@ import com.shopme.admin.util.FileUploadUtil;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -17,7 +18,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 
-import static com.shopme.admin.constants.Constants.*;
+import static com.shopme.admin.constants.Constants.USERS_PER_PAGE;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -27,10 +29,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public String listAll(Model model) {
-        List<User> users = userService.listAll();
-        model.addAttribute("listUsers", users);
-        return "users";
+    public String listFirstPage(Model model) {
+        return listByPage(1, model);
     }
 
     @GetMapping("/new")
@@ -44,6 +44,26 @@ public class UserController {
 
         return "user_form";
     }
+
+    @GetMapping("/page/{pageNum}")
+    public String listByPage(@PathVariable("pageNum") int pageNum, Model model) {
+        Page<User> page = userService.listByPage(pageNum);
+        List<User> users = page.getContent();
+
+        long startCount = (long) (pageNum - 1) * USERS_PER_PAGE + 1;
+        long endCount = startCount + USERS_PER_PAGE - 1;
+
+        if (endCount > page.getTotalElements()) endCount = page.getTotalElements();
+
+        model.addAttribute("startCount", startCount);
+        model.addAttribute("endCount", endCount);
+        model.addAttribute("currPage", pageNum);
+        model.addAttribute("lastPage", page.getTotalPages());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("listUsers", users);
+        return "users";
+    }
+
 
     @PostMapping("/save")
     public String saveUser(User user, RedirectAttributes redirectAttributes,
