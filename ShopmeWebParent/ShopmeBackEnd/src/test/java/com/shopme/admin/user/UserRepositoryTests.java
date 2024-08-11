@@ -15,6 +15,7 @@ import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -160,7 +161,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void testListFirstPage () {
+    public void testListFirstPage() {
         int pageNumber = 0;
         int pageSize = 4;
 
@@ -173,14 +174,30 @@ public class UserRepositoryTests {
         users.forEach(System.out::println);
 
 
-        assertThat(page.getTotalPages()).isEqualTo((page.getTotalElements()/pageSize) + 1);
+        assertThat(page.getTotalPages()).isEqualTo((page.getTotalElements() / pageSize) + 1);
         assertThat(users.size()).isEqualTo(4);
 
 
     }
 
+    @Test
+    public void testSearchUsers() {
+        String keyWord = "bruce";
 
+        int pageNumber = 0;
+        int pageSize = 4;
 
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<User> page = userRepository.findAll(keyWord, pageable);
+
+        List<User> users = page.getContent();
+
+        users.forEach(System.out::println);
+
+        assertThat(users.size()).isEqualTo(1);
+
+    }
 
 
 }

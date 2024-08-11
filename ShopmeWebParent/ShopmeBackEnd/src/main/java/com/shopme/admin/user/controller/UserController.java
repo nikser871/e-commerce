@@ -8,6 +8,7 @@ import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -30,7 +31,7 @@ public class UserController {
 
     @GetMapping
     public String listFirstPage(Model model) {
-        return listByPage(1, model, "firstName", "asc");
+        return listByPage(1, model, "firstName", "asc", null);
     }
 
     @GetMapping("/new")
@@ -48,9 +49,11 @@ public class UserController {
     @GetMapping("/page/{pageNum}")
     public String listByPage(@PathVariable("pageNum") int pageNum,
                              Model model,
-                             @RequestParam("sortField") String sortField,
-                             @RequestParam("sortDir") String sortDir) {
-        Page<User> page = userService.listByPage(pageNum, sortField, sortDir);
+                             @Param("sortField") String sortField,
+                             @Param("sortDir") String sortDir,
+                             @Param("keyWord") String keyWord) {
+
+        Page<User> page = userService.listByPage(pageNum, sortField, sortDir, keyWord);
         List<User> users = page.getContent();
 
         long startCount = (long) (pageNum - 1) * USERS_PER_PAGE + 1;
@@ -69,7 +72,7 @@ public class UserController {
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", reverseSortDir);
-
+        model.addAttribute("keyWord", keyWord);
 
 
         return "users";

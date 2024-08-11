@@ -12,6 +12,7 @@ public interface UserService {
 
 
     List<Role> listRoles();
+
     User saveUser(User user);
 
     boolean isEmailUnique(Long id, String email);
@@ -22,5 +23,5 @@ public interface UserService {
 
     void updateUserEnabledStatus(Long id, Boolean enabled);
 
-    Page<User> listByPage(int pageNum, String sortField, String sortDir);
+    Page<User> listByPage(int pageNum, String sortField, String sortDir, String keyWord);
 }
