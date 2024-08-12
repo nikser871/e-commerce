@@ -23,5 +23,7 @@ public interface UserService {
 
     void updateUserEnabledStatus(Long id, Boolean enabled);
 
+    List<User> listAll();
+
     Page<User> listByPage(int pageNum, String sortField, String sortDir, String keyWord);
 }

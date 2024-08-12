@@ -2,10 +2,13 @@ package com.shopme.admin.user.controller;
 
 
 import com.shopme.admin.exception.UserNotFoundException;
+import com.shopme.admin.user.UserCsvExporter;
 import com.shopme.admin.user.service.UserService;
 import com.shopme.admin.util.FileUploadUtil;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -152,6 +155,14 @@ public class UserController {
         redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/users";
+    }
+
+    @GetMapping("/export/csv")
+    public void exportToCSV(HttpServletResponse response) {
+
+        List<User> users = userService.listAll();
+        UserCsvExporter exporter = new UserCsvExporter();
+        exporter.export(users, response);
     }
 
 

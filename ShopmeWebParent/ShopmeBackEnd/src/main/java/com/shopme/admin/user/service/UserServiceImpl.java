@@ -87,6 +87,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> listAll() {
+        return userRepository.findAll(Sort.by("firstName").ascending());
+    }
+
+    @Override
     public Page<User> listByPage(int pageNum, String sortField,
                                  String sortDir, String keyWord) {
 
