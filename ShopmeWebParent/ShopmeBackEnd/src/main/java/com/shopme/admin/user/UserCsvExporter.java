@@ -12,17 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class UserCsvExporter {
+public class UserCsvExporter extends AbstractExporter {
 
     public void export(List<User> users, HttpServletResponse response) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-        String timesStamp = dateFormat.format(new Date());
-        String filename = "users" + timesStamp + ".csv";
-
-        response.setContentType("text/csv");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=" + filename;
-        response.setHeader(headerKey, headerValue);
+        setResponseHeader(response, "text/csv", ".csv");
 
         try {
             ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
@@ -39,14 +32,9 @@ public class UserCsvExporter {
             csvWriter.close();
 
 
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
-
 
 
     }
