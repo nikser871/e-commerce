@@ -63,4 +63,9 @@ public class User {
     public void addRole(Role role) {
         this.roles.add(role);
     }
+
+    @Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }
