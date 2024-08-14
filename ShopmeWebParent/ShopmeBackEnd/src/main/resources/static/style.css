@@ -8,7 +8,7 @@
     div.full-details {
         display: none;
     }
-    div.lest-details{
+    div.less-details{
         display: block;
     }
 }
@@ -20,7 +20,7 @@
         display: block;
     }
 
-    div.lest-details{
+    div.less-details{
         display: none;
     }
 
@@ -32,7 +32,7 @@
 @media screen and (min-width: 1024px) {
     /* large screen*/
 
-    div.lest-details{
+    div.less-details{
         display: none;
     }
 
