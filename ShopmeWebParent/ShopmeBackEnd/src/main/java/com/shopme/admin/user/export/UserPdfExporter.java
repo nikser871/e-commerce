@@ -1,21 +1,18 @@
-package com.shopme.admin.user;
+package com.shopme.admin.user.export;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
-import com.lowagie.text.pdf.PdfCell;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.poi.ss.formula.functions.MatrixFunction;
-import org.springframework.security.core.parameters.P;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-public class UserPdfExporter extends AbstractExporter{
+public class UserPdfExporter extends AbstractExporter {
 
 
     public void export(List<User> users, HttpServletResponse response) {

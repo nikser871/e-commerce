@@ -26,4 +26,9 @@ public interface UserService {
     List<User> listAll();
 
     Page<User> listByPage(int pageNum, String sortField, String sortDir, String keyWord);
+
+    User getByEmail(String email);
+
+    User updateAccount(User userInForm);
+
 }

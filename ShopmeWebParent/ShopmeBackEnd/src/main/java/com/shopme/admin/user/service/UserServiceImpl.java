@@ -107,6 +107,31 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
+    public User getByEmail(String email) {
+        return userRepository.getUserByEmail(email);
+    }
+
+    @Override
+    public User updateAccount(User userInForm) {
+        User user = userRepository.getUserByEmail(userInForm.getEmail());
+
+        if (!userInForm.getPassword().isEmpty()) {
+            user.setPassword(userInForm.getPassword());
+            encodePassword(user);
+        }
+
+        if (userInForm.getPhotos() != null) {
+            user.setPhotos(userInForm.getPhotos());
+        }
+
+        user.setFirstName(userInForm.getFirstName());
+        user.setLastName(userInForm.getLastName());
+
+        return userRepository.save(user);
+
+    }
+
     private void encodePassword(User user) {
         var encode = passwordEncoder.encode(user.getPassword());
         user.setPassword(encode);
