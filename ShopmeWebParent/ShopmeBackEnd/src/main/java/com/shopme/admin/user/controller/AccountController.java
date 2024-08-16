@@ -32,7 +32,7 @@ public class AccountController {
 
         model.addAttribute("user", user);
 
-        return "account_form";
+        return "users/account_form";
 
 
     }
