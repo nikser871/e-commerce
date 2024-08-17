@@ -1,5 +1,9 @@
 package com.shopme.admin.util;
 
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -10,6 +14,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public final class FileUploadUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadUtil.class);
 
     public static void saveFile(String uploadDir, String fileName,
                                 MultipartFile multipartFile) throws IOException {
@@ -36,12 +42,14 @@ public final class FileUploadUtil {
                     try {
                         Files.delete(file);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        LOGGER.error("Could not delete file {}", file);
+//                        System.out.println("Could not list directory " + dir);
                     }
                 }
             });
         } catch (IOException ex) {
-            System.out.println("Could not list directory " + dir);
+            LOGGER.error("Could not list directory {}", dir);
+//            System.out.println("Could not list directory " + dir);
         }
     }
 }

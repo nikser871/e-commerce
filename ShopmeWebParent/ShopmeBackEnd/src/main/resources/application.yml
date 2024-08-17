@@ -19,8 +19,16 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
 
-
 server:
   port: 8080
   servlet:
     context-path: /ShopmeAdmin
+
+logging:
+  logback:
+    rollingpolicy:
+      file-name-pattern: Shopme-backend-%d{yyyy-MM-dd}.%i.log
+      max-file-size: 100KB
+      total-size-cap: 1MB
+      max-history: 14
+      clean-history-on-start: true
