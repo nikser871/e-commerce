@@ -48,6 +48,7 @@ public class WebSecurityConfig {
                         authorize
                                 .requestMatchers("/images/**", "/js/**", "/webjars/**").permitAll()
                                 .requestMatchers("/users/**").hasAuthority("Admin")
+                                .requestMatchers("/categories/**").hasAnyAuthority("Admin", "Editor")
                                 .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .formLogin(form ->
