@@ -89,11 +89,24 @@ public class CategoryRepositoryTests {
         }
     }
 
+    @Test
+    public void testListRootCategories() {
+        List<Category> categories = repo.findRootCategories();
+
+        categories.forEach(System.out::println);
+
+        assertThat(categories).hasSizeGreaterThan(0);
+
+    }
+
+
     private void printChildren(Category root, int level) {
         for (Category child : root.getChildren()) {
             System.out.println("--".repeat(level) + child.getName());
             printChildren(child, level + 1);
         }
     }
+
+
 
 }

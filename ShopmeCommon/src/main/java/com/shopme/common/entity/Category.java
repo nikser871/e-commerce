@@ -46,4 +46,9 @@ public class Category {
         parent.getChildren().add(this);
     }
 
+    @Transient
+    public String getImagePath() {
+        return "/category-images/" + this.id + "/" + this.image;
+    }
+
 }

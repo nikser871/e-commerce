@@ -4,10 +4,11 @@ import com.shopme.admin.category.repositories.CategoryRepository;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.shopme.admin.util.Util.*;
 
 
 @Service
@@ -18,7 +19,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> listAll() {
-        return categoryRepository.findAll();
+        List<Category> rootCategories = categoryRepository.findRootCategories();
+        return listHierarchicalCategories(rootCategories);
     }
 
     @Override
@@ -27,8 +29,10 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categoriesUsedInForm = new ArrayList<>();
         for (Category category : categoryList) {
             if (category.getParent() == null) {
-                categoriesUsedInForm.add(Category.builder().name(category.getName()).build());
-                listChildren(category, 1, categoriesUsedInForm);
+                categoriesUsedInForm.add(Category.builder()
+                        .id(category.getId())
+                        .name(category.getName()).build());
+                listSubCategoriesUsedInForm(category, 1, categoriesUsedInForm);
             }
         }
 
@@ -36,10 +40,36 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
-    private void listChildren(Category root, int level, List<Category> categoriesUsedInForm) {
+    @Override
+    public Category save(Category category) {
+        return categoryRepository.save(category);
+    }
+
+    private List<Category> listHierarchicalCategories(List<Category> rootCategories) {
+        List<Category> hierarchicalCategories = new ArrayList<>();
+
+        for (Category category : rootCategories) {
+            hierarchicalCategories.add(copyFull(category));
+            listSubHierarchicalCategories(category, 1, hierarchicalCategories);
+        }
+
+        return hierarchicalCategories;
+
+    }
+
+    private void listSubCategoriesUsedInForm(Category root, int level, List<Category> categoriesUsedInForm) {
         for (Category child : root.getChildren()) {
-            categoriesUsedInForm.add(Category.builder().name("--".repeat(level) + child.getName()).build());
-            listChildren(child, level + 1, categoriesUsedInForm);
+            categoriesUsedInForm.add(Category.builder()
+                    .id(child.getId())
+                    .name(child.getName()).build());
+            listSubCategoriesUsedInForm(child, level + 1, categoriesUsedInForm);
+        }
+    }
+
+    private void listSubHierarchicalCategories(Category root, int level, List<Category> categoriesUsedInForm) {
+        for (Category child : root.getChildren()) {
+            categoriesUsedInForm.add(copyFullWithName(child, "--".repeat(level) + child.getName()));
+            listSubHierarchicalCategories(child, level + 1, categoriesUsedInForm);
         }
     }
 

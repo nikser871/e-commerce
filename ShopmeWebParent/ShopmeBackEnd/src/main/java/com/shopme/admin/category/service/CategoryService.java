@@ -8,5 +8,6 @@ public interface CategoryService {
 
     List<Category> listAll();
     List<Category> listCategoriesUsedInForm();
+    Category save(Category category);
 
 }

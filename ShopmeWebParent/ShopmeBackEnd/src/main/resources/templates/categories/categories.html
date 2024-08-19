@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments :: page_head('Categories - Shopme Admin')" />
+<head th:replace="fragments :: page_head('Categories - Shopme Admin')"></head>
 <body>
 <div class="container-fluid">
 	<div th:replace="navigation :: menu"></div>
@@ -10,6 +10,10 @@
 		<a th:href="@{/categories/new}" class="fas fa-folder-plus fa-2x icon-dark mr-2"></a>
 		<a th:href="@{/categories/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
 				
+	</div>
+
+	<div th:if="${message != null}" class="alert alert-success text-center">
+		[[${message}]]
 	</div>
 	
 	<div>
@@ -42,7 +46,9 @@
 			<tbody>
 				<tr th:each="cat : ${listCategories}">
 					<td>[[${cat.id}]]</td>
-					<td></td>
+					<td>
+						<img th:src="@{${cat.imagePath}}" style="width: 100px" class="img-fluid">
+					</td>
 					<td>[[${cat.name}]]</td>
 					<td>[[${cat.alias}]]</td>
 					<td>
