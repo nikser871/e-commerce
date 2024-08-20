@@ -107,6 +107,26 @@ public class CategoryRepositoryTests {
         }
     }
 
+    @Test
+    public void testFindByName() {
+        String name = "Computers";
+
+        Category byName = repo.findByName(name);
+
+        assertThat(byName).isNotNull();
+        assertThat(byName.getName()).isEqualTo(name);
+    }
+
+    @Test
+    public void testFindByAlias() {
+        String name = "computers";
+
+        Category byAlias = repo.findByName(name);
+
+        assertThat(byAlias).isNotNull();
+        assertThat(byAlias.getAlias()).isEqualTo(name);
+    }
+
 
 
 }

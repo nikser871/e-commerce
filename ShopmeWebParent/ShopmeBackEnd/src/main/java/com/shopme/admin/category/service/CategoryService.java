@@ -8,8 +8,13 @@ import java.util.List;
 public interface CategoryService {
 
     List<Category> listAll();
+
     List<Category> listCategoriesUsedInForm();
+
     Category save(Category category);
+
     Category getCategoryById(Long id) throws CategoryNotFoundException;
+
+    String checkUnique(Long id, String name, String alias);
 
 }
