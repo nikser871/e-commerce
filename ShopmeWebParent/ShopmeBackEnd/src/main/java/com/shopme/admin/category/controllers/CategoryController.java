@@ -2,17 +2,14 @@ package com.shopme.admin.category.controllers;
 
 
 import com.shopme.admin.category.service.CategoryService;
+import com.shopme.admin.exception.CategoryNotFoundException;
 import com.shopme.admin.util.FileUploadUtil;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUpload;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -50,25 +47,52 @@ public class CategoryController {
     @PostMapping("/save")
     public String saveCategory(Category category,
                                @RequestParam("fileImage") MultipartFile multipartFile,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes) throws IOException {
 
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        if (!multipartFile.isEmpty()) {
+            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            category.setImage(fileName);
 
-        category.setImage(fileName);
-        Category saved = categoryService.save(category);
+            Category savedCategory = categoryService.save(category);
+            String uploadDir = "../category-images/" + savedCategory.getId();
 
-        String uploadDir = "../category-images/" + saved.getId();
-        try {
+            FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-
-            redirectAttributes.addFlashAttribute("message",
-                    "Category saved successfully!");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } else {
+//            if (category.getImage().isEmpty()) category.setImage(null);
+            categoryService.save(category);
         }
 
+
+
+
+        redirectAttributes.addFlashAttribute("message", "The user has been saved successfully.");
+
         return "redirect:/categories";
+    }
+
+
+
+    @GetMapping("/edit/{id}")
+    public String editCategory(Model model, @PathVariable Long id,
+                               RedirectAttributes redirectAttributes) {
+
+        try {
+            Category category = categoryService.getCategoryById(id);
+            List<Category> categories = categoryService.listCategoriesUsedInForm();
+            model.addAttribute("category", category);
+            model.addAttribute("pageTitle", "Edit Category (ID : " + id + ")");
+            model.addAttribute("listCategories", categories);
+
+            return "categories/category_form";
+        } catch (CategoryNotFoundException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            return "redirect:/categories";
+        }
 
     }
+
+
+
 
 }

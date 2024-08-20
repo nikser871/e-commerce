@@ -1,12 +1,14 @@
 package com.shopme.admin.category.service;
 
 import com.shopme.admin.category.repositories.CategoryRepository;
+import com.shopme.admin.exception.CategoryNotFoundException;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.shopme.admin.util.Util.*;
 
@@ -45,32 +47,39 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.save(category);
     }
 
-    private List<Category> listHierarchicalCategories(List<Category> rootCategories) {
-        List<Category> hierarchicalCategories = new ArrayList<>();
+    @Override
+    public Category getCategoryById(Long id) throws CategoryNotFoundException {
+        return categoryRepository.findById(id)
+            .orElseThrow(() ->new CategoryNotFoundException("Could not find any category with ID "+id));
 
-        for (Category category : rootCategories) {
-            hierarchicalCategories.add(copyFull(category));
-            listSubHierarchicalCategories(category, 1, hierarchicalCategories);
-        }
+}
 
-        return hierarchicalCategories;
+private List<Category> listHierarchicalCategories(List<Category> rootCategories) {
+    List<Category> hierarchicalCategories = new ArrayList<>();
 
+    for (Category category : rootCategories) {
+        hierarchicalCategories.add(copyFull(category));
+        listSubHierarchicalCategories(category, 1, hierarchicalCategories);
     }
 
-    private void listSubCategoriesUsedInForm(Category root, int level, List<Category> categoriesUsedInForm) {
-        for (Category child : root.getChildren()) {
-            categoriesUsedInForm.add(Category.builder()
-                    .id(child.getId())
-                    .name(child.getName()).build());
-            listSubCategoriesUsedInForm(child, level + 1, categoriesUsedInForm);
-        }
-    }
+    return hierarchicalCategories;
 
-    private void listSubHierarchicalCategories(Category root, int level, List<Category> categoriesUsedInForm) {
-        for (Category child : root.getChildren()) {
-            categoriesUsedInForm.add(copyFullWithName(child, "--".repeat(level) + child.getName()));
-            listSubHierarchicalCategories(child, level + 1, categoriesUsedInForm);
-        }
+}
+
+private void listSubCategoriesUsedInForm(Category root, int level, List<Category> categoriesUsedInForm) {
+    for (Category child : root.getChildren()) {
+        categoriesUsedInForm.add(Category.builder()
+                .id(child.getId())
+                .name(child.getName()).build());
+        listSubCategoriesUsedInForm(child, level + 1, categoriesUsedInForm);
     }
+}
+
+private void listSubHierarchicalCategories(Category root, int level, List<Category> categoriesUsedInForm) {
+    for (Category child : root.getChildren()) {
+        categoriesUsedInForm.add(copyFullWithName(child, "--".repeat(level) + child.getName()));
+        listSubHierarchicalCategories(child, level + 1, categoriesUsedInForm);
+    }
+}
 
 }
