@@ -5,10 +5,10 @@ import com.shopme.admin.exception.CategoryNotFoundException;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.shopme.admin.util.Util.*;
 
@@ -21,14 +21,22 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> listAll() {
-        List<Category> rootCategories = categoryRepository.findRootCategories();
-        return listHierarchicalCategories(rootCategories);
+    public List<Category> listAll(String sortDir) {
+        Sort sort = Sort.by("name");
+
+        if (sortDir.equals("asc"))
+            sort = sort.ascending();
+        else if (sortDir.equals("desc"))
+            sort = sort.descending();
+
+
+        List<Category> rootCategories = categoryRepository.findRootCategories(sort);
+        return listHierarchicalCategories(rootCategories, sortDir);
     }
 
     @Override
     public List<Category> listCategoriesUsedInForm() {
-        List<Category> categoryList = categoryRepository.findAll();
+        List<Category> categoryList = categoryRepository.findRootCategories(Sort.by("name").ascending());
         List<Category> categoriesUsedInForm = new ArrayList<>();
         for (Category category : categoryList) {
             if (category.getParent() == null) {
@@ -77,12 +85,12 @@ public class CategoryServiceImpl implements CategoryService {
         return "OK";
     }
 
-    private List<Category> listHierarchicalCategories(List<Category> rootCategories) {
+    private List<Category> listHierarchicalCategories(List<Category> rootCategories, String sortDir) {
         List<Category> hierarchicalCategories = new ArrayList<>();
 
         for (Category category : rootCategories) {
             hierarchicalCategories.add(copyFull(category));
-            listSubHierarchicalCategories(category, 1, hierarchicalCategories);
+            listSubHierarchicalCategories(category, 1, hierarchicalCategories, sortDir);
         }
 
         return hierarchicalCategories;
@@ -90,19 +98,31 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private void listSubCategoriesUsedInForm(Category root, int level, List<Category> categoriesUsedInForm) {
-        for (Category child : root.getChildren()) {
+        for (Category child : sortSubCategories(root.getChildren(), "asc")) {
             categoriesUsedInForm.add(Category.builder()
                     .id(child.getId())
-                    .name(child.getName()).build());
+                    .name("--".repeat(level) + child.getName()).build());
             listSubCategoriesUsedInForm(child, level + 1, categoriesUsedInForm);
         }
     }
 
-    private void listSubHierarchicalCategories(Category root, int level, List<Category> categoriesUsedInForm) {
-        for (Category child : root.getChildren()) {
+    private void listSubHierarchicalCategories(Category root, int level, List<Category> categoriesUsedInForm,
+                                               String sortDir) {
+        for (Category child : sortSubCategories(root.getChildren(), sortDir)) {
             categoriesUsedInForm.add(copyFullWithName(child, "--".repeat(level) + child.getName()));
-            listSubHierarchicalCategories(child, level + 1, categoriesUsedInForm);
+            listSubHierarchicalCategories(child, level + 1, categoriesUsedInForm, sortDir);
         }
+    }
+
+    private List<Category> sortSubCategories(List<Category> subCategories, String sortDir) {
+
+        List<Category> categories = new ArrayList<>(subCategories);
+        if (sortDir == null || sortDir.equals("asc") || sortDir.isEmpty())
+            Collections.sort(categories, Comparator.comparing(Category::getName));
+        else if (sortDir.equals("desc"))
+            Collections.sort(categories, Comparator.comparing(Category::getName).reversed());
+
+        return categories;
     }
 
 }

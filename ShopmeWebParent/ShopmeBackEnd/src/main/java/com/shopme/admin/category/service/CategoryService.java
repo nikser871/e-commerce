@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<Category> listAll();
+    List<Category> listAll(String sortDir);
 
     List<Category> listCategoriesUsedInForm();
 

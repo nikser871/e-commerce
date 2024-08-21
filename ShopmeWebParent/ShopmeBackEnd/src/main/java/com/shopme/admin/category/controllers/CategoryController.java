@@ -6,6 +6,7 @@ import com.shopme.admin.exception.CategoryNotFoundException;
 import com.shopme.admin.util.FileUploadUtil;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -25,9 +26,15 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public String listAll(Model model) {
-        List<Category> listCategories = categoryService.listAll();
+    public String listAll(@Param("sortDir") String sortDir, Model model) {
+        if (sortDir == null || sortDir.isEmpty())
+            sortDir = "asc";
+
+        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+
+        List<Category> listCategories = categoryService.listAll(sortDir);
         model.addAttribute("listCategories", listCategories);
+        model.addAttribute("reverseSortDir", reverseSortDir);
 
         return "categories/categories";
 
