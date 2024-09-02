@@ -13,6 +13,7 @@ public final class Util {
                 .alias(category.getAlias())
                 .image(category.getImage())
                 .enabled(category.getEnabled())
+                .hasChildren(!category.getChildren().isEmpty())
                 .build();
     }
 
@@ -20,9 +21,6 @@ public final class Util {
         return Category.builder()
                 .id(category.getId())
                 .name(name)
-                .alias(category.getAlias())
-                .image(category.getImage())
-                .enabled(category.getEnabled())
                 .build();
     }
 }

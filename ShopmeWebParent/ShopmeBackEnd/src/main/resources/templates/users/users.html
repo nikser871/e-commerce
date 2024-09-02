@@ -70,30 +70,19 @@
             <tr th:each="user : ${listUsers}">
                 <td class="hideable-column">[[${user.id}]]</td>
                 <td>
-                    <span th:if="${user.photos == null}" class="fa-solid fa-image-portrait fa-3x icon-gray"></span>
-                    <img th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"
-                         style="width: 100px"/>
+                    <div th:replace="fragments :: user_photos"></div>
                 </td>
                 <td class="hideable-column">[[${user.email}]]</td>
                 <td>[[${user.firstName}]]</td>
                 <td>[[${user.lastName}]]</td>
                 <td>[[${user.roles}]]</td>
+
                 <td>
-                    <a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green"
-                       th:href="@{'/users/' + ${user.id} + '/enabled/false'}"
-                       title="Disabled this user"></a>
-                    <a th:if="${user.enabled == false}" class="fas fa-check-circle fa-2x icon-gray"
-                       th:href="@{'/users/' + ${user.id} + '/enabled/true'}"
-                       title="Enable this user"></a>
+                    <div th:replace="fragments :: user_status"></div>
                 </td>
+
                 <td>
-                    <a class="fa-solid fa-pen-to-square fa-2x icon-green"
-                       th:href="@{'/users/edit/' + ${user.id}}" title="Edit this user"></a>
-                    &nbsp;
-                    <a class="fas fa-trash fa-2x icon-gray link-delete"
-                       th:href="@{'/users/delete/' + ${user.id}}"
-                       th:userId="${user.id}"
-                       title="Delete this user"></a>
+                    <div th:replace="fragments :: user_actions"></div>
                 </td>
             </tr>
             </tbody>
@@ -103,37 +92,19 @@
     <div class="less-details">
         <div th:each="user : ${listUsers}" class="row m-1">
             <div class="col-4">
-                <span th:if="${user.photos == null}" class="fa-solid fa-image-portrait fa-3x icon-gray"></span>
-                <img th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"
-                     style="width: 100px"/>
+                <div th:replace="fragments :: user_photos" />
             </div>
             <div class="col-8">
                 <div>[[${user.fullName}]]</div>
                 <div>[[${user.roles}]]</div>
                 <div class="mt-2">
-                    <a th:if="${user.enabled == true}" class="fas fa-check-circle fa-2x icon-green"
-                       th:href="@{'/users/' + ${user.id} + '/enabled/false'}"
-                       title="Disabled this user"></a>
-                    <a th:if="${user.enabled == false}" class="fas fa-check-circle fa-2x icon-gray"
-                       th:href="@{'/users/' + ${user.id} + '/enabled/true'}"
-                       title="Enable this user"></a>
+                    <div th:replace="fragments :: user_status" />
                     &nbsp;
-                    <a class="fa-solid fa-pen-to-square fa-2x icon-green"
-                       th:href="@{'/users/edit/' + ${user.id}}" title="Edit this user"></a>
-                    &nbsp;
-                    <a class="fas fa-trash fa-2x icon-gray link-delete"
-                       th:href="@{'/users/delete/' + ${user.id}}"
-                       th:userId="${user.id}"
-                       title="Delete this user"></a>
+                    <div th:replace="fragments :: user_actions" />
                 </div>
-
             </div>
-
-
             <div>&nbsp;</div>
         </div>
-
-
     </div>
 
     <div class="text-center m-1" th:if="${totalElements} > 0">
@@ -169,59 +140,28 @@
         </nav>
     </div>
 
-    <div class="modal text-center" id="confirmModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete Confirmation</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body" id="confirmText">
-                    <span></span>
-                </div>
-
-                <div class="modal-footer">
-                    <a class="btn btn-success" href="" id="yesButton">Yes</a>
-                    <button type="button" name="test" class="btn btn-danger" data-bs-dismiss="modal">No</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div th:replace="modal_fragments :: confirm_modal"></div>
 
     <div th:replace="fragments :: footer"></div>
 
 </div>
+
+<script th:src="@{/js/common_list.js}"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $(".link-delete").on('click', function (e) {
+
+    moduleUrl = "[[@{/users}]]";
+
+    $(document).ready(function() {
+        $(".link-delete").on("click", function(e) {
             e.preventDefault();
-            const link = $(this);
-            // alert($(this).attr("href"));
-            const userId = link.attr("userId");
-            $("#yesButton").attr("href", link.attr("href"));
-            $("#confirmText").text("Are you sure you want to delete this user with ID : " + userId);
-            $("#confirmModal").show();
-
+            showDeleteConfirmModal($(this), 'user');
         });
-
     });
 
 
-    function clearFilter() {
-        window.location = "[[@{/users}]]";
-    }
 
 
-    document.querySelector('.btn-close').addEventListener('click',
-        () => {
-            $("#confirmModal").hide();
-        });
 
-    document.querySelector('[name="test"]').addEventListener('click',
-        () => {
-            $("#confirmModal").hide();
-        });
 </script>
 </body>
 </html>

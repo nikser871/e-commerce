@@ -2,11 +2,13 @@ package com.shopme.admin.category.service;
 
 import com.shopme.admin.category.repositories.CategoryRepository;
 import com.shopme.admin.exception.CategoryNotFoundException;
+import com.shopme.admin.exception.UserNotFoundException;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -16,6 +18,7 @@ import static com.shopme.admin.util.Util.*;
 @Service
 @RequiredArgsConstructor
 @Qualifier("primary")
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -83,6 +86,21 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return "OK";
+    }
+
+    @Override
+    public void updateCategoryEnabledStatus(Long id, boolean enabled) {
+        categoryRepository.updateEnabledStatus(id, enabled);
+    }
+
+    @Override
+    public void deleteCategory(Long id) throws CategoryNotFoundException {
+        var countById = categoryRepository.countById(id);
+        if (countById == 0) {
+            throw new CategoryNotFoundException("Could not find any category with ID " + id);
+        }
+
+        categoryRepository.deleteById(id);
     }
 
     private List<Category> listHierarchicalCategories(List<Category> rootCategories, String sortDir) {

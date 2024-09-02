@@ -3,6 +3,7 @@ package com.shopme.admin.category.controllers;
 
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.admin.exception.CategoryNotFoundException;
+import com.shopme.admin.exception.UserNotFoundException;
 import com.shopme.admin.util.FileUploadUtil;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
@@ -73,8 +74,25 @@ public class CategoryController {
 
 
 
-        redirectAttributes.addFlashAttribute("message", "The user has been saved successfully.");
+        redirectAttributes.addFlashAttribute("message", "The category has been saved successfully.");
 
+        return "redirect:/categories";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteCategory(@PathVariable("id") Long id,
+                             RedirectAttributes redirectAttributes, Model model) {
+        try {
+            categoryService.deleteCategory(id);
+            String categoryDir = "../category-images/" + id;
+            FileUploadUtil.removeDir(categoryDir);
+
+            redirectAttributes.addFlashAttribute("message",
+                    "The category ID " + id + " has been deleted successfully");
+
+        } catch (CategoryNotFoundException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+        }
         return "redirect:/categories";
     }
 
@@ -97,6 +115,18 @@ public class CategoryController {
             return "redirect:/categories";
         }
 
+    }
+
+
+    @GetMapping("/{id}/enabled/{status}")
+    public String enableCategory(@PathVariable("id") Long id, @PathVariable("status") boolean enabled,
+                             RedirectAttributes redirectAttributes) {
+        categoryService.updateCategoryEnabledStatus(id, enabled);
+        String status = enabled ? "Enabled" : "Disabled";
+        String message = "The category with ID " + id + " has been " + status;
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/categories";
     }
 
 

@@ -17,4 +17,7 @@ public interface CategoryService {
 
     String checkUnique(Long id, String name, String alias);
 
+    void updateCategoryEnabledStatus(Long id, boolean enabled);
+
+    void deleteCategory(Long id) throws CategoryNotFoundException;
 }
